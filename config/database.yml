@@ -80,7 +80,12 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
-  database: minke_api_production
-  username: minke_api
-  password: <%= ENV["MINKE_API_DATABASE_PASSWORD"] %>
+  database: "<%= ENV['POSTGRESQL_DATABASE']%>"
+  pool: 50
+  username: "<%= ENV['POSTGRESQL_USERNAME']%>"
+  password: "<%= ENV['POSTGRESQL_PASSWORD']%>"
+  host: "<%= ENV['POSTGRESQL_ADDRESS']%>"
+  port: 5432
+  adapter: postgresql
+  encoding: utf8
+  reconnect: false
