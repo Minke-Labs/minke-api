@@ -24,11 +24,11 @@ describe Api::V1::ReferralCodesController, type: :request do
             headers: authentication_header
 
           expect(response).to be_successful
-          expect(json_body["device_id"]).to eq(device_id)
-          expect(json_body["wallet"]).to eq(wallet)
-          expect(json_body["id"]).to_not be_nil
-          expect(json_body["code"]).to_not be_nil
-          expect(json_body["code"].size).to eq(6)
+          expect(json_body['device_id']).to eq(device_id)
+          expect(json_body['wallet']).to eq(wallet)
+          expect(json_body['id']).to_not be_nil
+          expect(json_body['code']).to_not be_nil
+          expect(json_body['code'].size).to eq(6)
         end
       end
     end

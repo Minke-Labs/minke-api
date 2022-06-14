@@ -4,10 +4,13 @@ module Api
       def create
         @referral_code = ReferralCode.find_by(code: params[:code])
 
-        unless @referral_code.present?
+        unless @referral_code.present? &&
+          referral_params[:device_id].present? &&
+          referral_params[:wallet].present? &&
+          @referral_code.wallet != referral_params[:wallet]
           return render json: { error: "invalid_code" }, status: :ok
         end
-        
+
         device_wallets = ReferralCode.where(device_id: referral_params[:device_id]).pluck(:wallet)
         if device_wallets.include?(referral_params[:wallet])
           return render json: { error: "invalid_code" }, status: :ok
@@ -19,7 +22,7 @@ module Api
         end
 
         if @referral
-          render json: @referral.as_json(include: :referral_code), status: :ok
+          render json: @referral, status: :ok
         else
           render json: @referral.errors, status: :unprocessable_entity
         end
