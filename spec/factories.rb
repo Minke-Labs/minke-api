@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :reward do
-    uid { "MyString" }
+    uid { 'MyString' }
     referral
     claimed { false }
-    claim_uid { "MyString" }
+    claim_uid { 'MyString' }
+    source { 'MyString' }
   end
 
   factory(:api_user) do

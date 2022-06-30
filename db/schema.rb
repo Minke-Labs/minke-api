@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_14_154716) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_referral_codes_on_code"
     t.index ["wallet"], name: "index_referral_codes_on_wallet"
   end
 
