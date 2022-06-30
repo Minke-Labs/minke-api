@@ -1,4 +1,11 @@
 FactoryBot.define do
+  factory :reward do
+    uid { "MyString" }
+    referral
+    claimed { false }
+    claim_uid { "MyString" }
+  end
+
   factory(:api_user) do
     name { Faker::Internet.name }
     token { Faker::Internet.password }

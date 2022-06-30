@@ -49,4 +49,8 @@ group :development do
   # gem "spring"
 end
 
+gem 'dotenv-rails', groups: [:development, :test]
+
+gem 'rest-client'
+gem 'sidekiq'
 gem 'strscan', '3.0.3'
