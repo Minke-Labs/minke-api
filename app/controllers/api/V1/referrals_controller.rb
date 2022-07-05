@@ -8,12 +8,12 @@ module Api
           referral_params[:device_id].present? &&
           referral_params[:wallet].present? &&
           @referral_code.wallet != referral_params[:wallet]
-          return render json: { error: "invalid_code" }, status: :ok
+          return render json: { error: 'invalid_code' }, status: :ok
         end
 
         device_wallets = ReferralCode.where(device_id: referral_params[:device_id]).pluck(:wallet)
         if device_wallets.include?(referral_params[:wallet])
-          return render json: { error: "invalid_code" }, status: :ok
+          return render json: { error: 'invalid_code' }, status: :ok
         end
 
         @referral = Referral.find_or_create_by(wallet: referral_params[:wallet]) do |ref|
