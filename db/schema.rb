@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_08_140042) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_06_124622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,5 +39,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_08_140042) do
     t.index ["referral_code_id"], name: "index_referrals_on_referral_code_id"
   end
 
+  create_table "rewards", force: :cascade do |t|
+    t.string "uid"
+    t.bigint "referral_id", null: false
+    t.boolean "claimed"
+    t.string "claim_uid"
+    t.string "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "wallet"
+    t.float "amount"
+    t.index ["referral_id"], name: "index_rewards_on_referral_id"
+  end
+
   add_foreign_key "referrals", "referral_codes"
+  add_foreign_key "rewards", "referrals"
 end
