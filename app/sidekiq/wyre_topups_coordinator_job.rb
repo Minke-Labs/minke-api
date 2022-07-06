@@ -13,7 +13,7 @@ class WyreTopupsCoordinatorJob
 
         ProcessTopupJob.perform_async(topup.id, 
                                       topup.dest,
-                                      topup.created_at,
+                                      topup.created_at / 1000,
                                       'wyre')
       end
       offset += top_ups.size
