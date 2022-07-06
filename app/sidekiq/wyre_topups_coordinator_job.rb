@@ -8,7 +8,7 @@ class WyreTopupsCoordinatorJob
 
     while top_ups.size > 0
       top_ups.each do |topup|
-        topup = OpenStruct.new(topup)
+        topup = OpenStruct.new(topup.transform_keys { |key| key.to_s.underscore })
         next unless topup.status === 'COMPLETE' && topup.usd_purchase_amount >= 100
 
         ProcessTopupJob.perform_async(topup.id, 
