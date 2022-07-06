@@ -11,7 +11,8 @@ module Api
           return render json: { error: 'invalid_code' }, status: :ok
         end
 
-        device_wallets = ReferralCode.where(device_id: referral_params[:device_id]).pluck(:wallet)
+        device_wallets = ReferralCode.where(device_id: referral_params[:device_id])
+                                     .where.not(wallet:referral_params[:wallet]).pluck(:wallet)
         if device_wallets.include?(referral_params[:wallet])
           return render json: { error: 'invalid_code' }, status: :ok
         end
