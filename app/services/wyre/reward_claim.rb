@@ -26,7 +26,7 @@ class Wyre::RewardClaim
   def params
     { 
       autoConfirm: true,
-      source: "account:AC_ALG67PM3EYZ",
+      source: ENV['WYRE_ACCOUNT_SOURCE'],
       sourceCurrency: "MATIC",
       sourceAmount: source_amount,
       dest: "matic:#{wallet}"
