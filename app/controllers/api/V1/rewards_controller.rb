@@ -4,6 +4,9 @@ module Api
   module V1
     class RewardsController < BaseController
       def index
+        @address = params[:address]
+        @rewards = Reward.where(wallet: @address)
+        render json: @rewards, status: :ok
       end
 
       def claim

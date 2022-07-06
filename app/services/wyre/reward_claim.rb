@@ -12,7 +12,7 @@ class Wyre::RewardClaim
     transfer = JSON.parse(data.body).dig('transfer', 'id') rescue nil
 
     if transfer
-      Reward.where(wallet: wallet).update_all(claimed: true)
+      Reward.where(wallet: wallet).update_all(claimed: true, amount: source_amount)
     end
     transfer
   end
@@ -42,10 +42,13 @@ class Wyre::RewardClaim
   end
 
   def source_amount
-    id = 'matic-network'
-    url = "https://api.coingecko.com/api/v3/simple/price?ids=#{id}&vs_currencies=usd"
-    data = JSON.parse(RestClient.get(url).body)
-    matic_quote = data[id]['usd']
-    (points * Reward::POINTS_TO_USD) / matic_quote;
+    @source_amount ||= begin
+      id = 'matic-network'
+      url = "https://api.coingecko.com/api/v3/simple/price?ids=#{id}&vs_currencies=usd"
+      data = JSON.parse(RestClient.get(url).body)
+      matic_quote = data[id]['usd']
+      (points * Reward::POINTS_TO_USD) / matic_quote;
+      0.001
+    end
   end
 end
