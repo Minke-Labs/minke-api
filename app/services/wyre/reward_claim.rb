@@ -48,7 +48,6 @@ class Wyre::RewardClaim
       data = JSON.parse(RestClient.get(url).body)
       matic_quote = data[id]['usd']
       (points * Reward::POINTS_TO_USD) / matic_quote;
-      0.001
     end
   end
 end
