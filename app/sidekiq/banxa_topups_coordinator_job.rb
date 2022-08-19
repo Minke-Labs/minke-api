@@ -5,19 +5,20 @@ class BanxaTopupsCoordinatorJob
   def perform(*args)
     page = 1
     last_reward = Reward.where(source: 'banxa').last
-    start_date = last_reward ? last_reward.created_at.to_date.to_s : '2022-04-01'
+    start_date = last_reward ? last_reward.created_at.to_date.to_s : '2022-08-18'
     end_date =  Date.today.to_s
     top_ups = search(page, start_date, end_date)
 
     while top_ups.size > 0
       top_ups.each do |topup|
         topup = OpenStruct.new(topup)
-        next unless topup.order_type === 'CRYPTO-BUY' && topup.coin_code === 'USDC' && topup.coin_amount >= 100
+        next unless topup.order_type === 'CRYPTO-BUY' && topup.coin_code === 'USDC'
 
         ProcessTopupJob.perform_async(topup.id, 
                                      "#{topup.tx_hash}:#{topup.wallet_address}",
                                      DateTime.parse(topup.completed_at).to_i,
-                                     'banxa')
+                                     'banxa',
+                                     topup.coin_amount)
       end
       page += 1
       top_ups = search(page, start_date, end_date)

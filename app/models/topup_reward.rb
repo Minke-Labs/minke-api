@@ -1,0 +1,2 @@
+class TopupReward < Reward
+end

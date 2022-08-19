@@ -63,7 +63,8 @@ describe Api::V1::ReferralsController, type: :request do
           headers: authentication_header
 
           expect(response).to be_successful
-          expect(response.body).to eq({ error: 'invalid_code'}.to_json)
+          expect(json_body['device_id']).to eq(referral.device_id)
+          expect(json_body['wallet']).to eq(previous_code.wallet)
         end
       end
 

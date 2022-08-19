@@ -19,7 +19,7 @@ describe BanxaTopupsCoordinatorJob, type: :job do
     context 'with no rewards' do
       it 'uses a default date' do
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 1, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 1, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: []))
         subject.perform
       end
@@ -29,10 +29,10 @@ describe BanxaTopupsCoordinatorJob, type: :job do
       let(:top_up) { { order_type: 'CRYPTO-SELL' } }
       it 'does not process the topup' do
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 1, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 1, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: [top_up]))
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 2, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 2, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to_not receive(:perform_async)
@@ -41,18 +41,23 @@ describe BanxaTopupsCoordinatorJob, type: :job do
     end
 
     context 'with less than 100 USD topup' do
-      let(:top_up) { { order_type: 'CRYPTO-BUY', coin_code: 'USDC', coin_amount: 50 } }
+      let(:date) { DateTime.now }
+      let(:top_up) do
+        { id: 1, order_type: 'CRYPTO-BUY', coin_code: 'USDC', coin_amount: 50,
+          completed_at: date.to_s, tx_hash: 'a', wallet_address: '0x1234' }
+      end
 
-      it 'does not process the topup' do
+      it 'process the topup' do
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 1, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 1, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: [top_up]))
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 2, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 2, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: []))
 
-         expect(ProcessTopupJob).to_not receive(:perform_async)
-         subject.perform
+        expect(ProcessTopupJob).to receive(:perform_async)
+          .with(1, 'a:0x1234', date.to_i, 'banxa', 50)
+        subject.perform
       end
     end
 
@@ -65,30 +70,33 @@ describe BanxaTopupsCoordinatorJob, type: :job do
 
       it 'process the topup' do
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 1, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 1, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: [top_up]))
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 2, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 2, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with(1, 'a:0x1234', date.to_i, 'banxa')
+          .with(1, 'a:0x1234', date.to_i, 'banxa', 100)
         subject.perform
       end
     end
 
     context 'enqueues a new search' do
-      let(:top_up) { { order_type: 'CRYPTO-BUY', coin_code: 'USDC', coin_amount: 50 } }
+      let(:date) { DateTime.now }
+      let(:top_up) do 
+        { order_type: 'CRYPTO-BUY', coin_code: 'USDC', coin_amount: 50, completed_at: date.to_s }
+      end
 
       it 'check the next page' do
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 1, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 1, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: [top_up]))
         allow(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 2, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 2, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: [top_up]))
         expect(Banxa::Client).to receive(:new)
-          .with(limit: 100, page: 3, start_date: '2022-04-01', end_date: Date.today.to_s)
+          .with(limit: 100, page: 3, start_date: '2022-08-18', end_date: Date.today.to_s)
           .and_return(double(search: []))
 
         subject.perform

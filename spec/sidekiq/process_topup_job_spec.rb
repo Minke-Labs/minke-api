@@ -8,7 +8,7 @@ describe ProcessTopupJob, type: :job do
       let!(:reward) { create(:reward, uid: 1) }
 
       it 'does not create a reward' do
-        expect { subject.perform(1, '', Time.now.to_i) }.to_not change { Reward.count }
+        expect { subject.perform(1, '', Time.now.to_i, 100) }.to_not change { Reward.count }
       end
     end
     
@@ -18,20 +18,44 @@ describe ProcessTopupJob, type: :job do
 
         it 'creates two rewards' do
           expect do
-            subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i)
+            subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 100)
           end.to change { Reward.count }.by(2)
         end
 
         it 'creates the correct rewards' do
-          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i)
+          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 100)
           expect(Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).count).to eq(2)
         end
 
         context 'with a referral after the topup' do
           it 'does not create a reward' do
             expect do
-              subject.perform(1, "matic:#{referral.wallet}", referral.created_at.to_i)
+              subject.perform(1, "matic:#{referral.wallet}", referral.created_at.to_i, 100)
             end.to_not change { Reward.count }
+          end
+        end
+
+        context 'with less points than the maximum' do
+          let!(:reward) { create(:reward, type: 'ExchangeReward', uid: 1) }
+
+          it 'gives the right amount of points' do
+            subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 40)
+            points = Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).pluck(:points)
+            expect(points).to eq([40,40])
+          end
+        end
+
+        context 'with more points than the maximum' do
+          it 'gives the maximum amount of points' do
+            subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 800)
+            points = Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).pluck(:points)
+            expect(points).to eq([100,100])
+          end
+        end
+
+        context 'with a exchange reward' do
+          it 'does not create a reward' do
+            expect { subject.perform(1, '', Time.now.to_i, 100) }.to_not change { Reward.count }
           end
         end
       end
@@ -39,7 +63,7 @@ describe ProcessTopupJob, type: :job do
       context 'when the referral does not exist' do
         it 'does not create a reward' do
           expect do
-            subject.perform(1, "matic:0xabcd", Time.now.to_i)
+            subject.perform(1, "matic:0xabcd", Time.now.to_i, 100)
           end.to_not change { Reward.count }
         end
       end
@@ -50,11 +74,11 @@ describe ProcessTopupJob, type: :job do
 
       it 'does not give another reward' do
         expect do
-          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i)
+          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 100)
         end.to change { Reward.count }.by(2)
 
         expect do
-          subject.perform(2, "matic:#{referral.wallet}", Time.now.to_i)
+          subject.perform(2, "matic:#{referral.wallet}", Time.now.to_i, 100)
         end.to_not change { Reward.count }
       end
     end
@@ -65,11 +89,11 @@ describe ProcessTopupJob, type: :job do
 
       it 'gives another reward' do
         expect do
-          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i)
+          subject.perform(1, "matic:#{referral.wallet}", Time.now.to_i, 100)
         end.to change { Reward.count }.by(2)
 
         expect do
-          subject.perform(2, "matic:#{another.wallet}", Time.now.to_i)
+          subject.perform(2, "matic:#{another.wallet}", Time.now.to_i, 100)
         end.to change { Reward.count }.by(2)
       end
     end
