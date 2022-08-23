@@ -27,7 +27,7 @@ class Wyre::RewardClaim
     { 
       autoConfirm: true,
       source: ENV['WYRE_ACCOUNT_SOURCE'],
-      sourceCurrency: "USDC",
+      sourceCurrency: "MUSDC",
       sourceAmount: source_amount,
       dest: "matic:#{wallet}"
     }
@@ -42,6 +42,6 @@ class Wyre::RewardClaim
   end
 
   def source_amount
-    points * Reward::POINTS_TO_USD;
+    points * Reward::POINTS_TO_USD
   end
 end
