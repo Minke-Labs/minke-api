@@ -1,2 +1,0 @@
-class TopupReward < Reward
-end

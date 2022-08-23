@@ -40,7 +40,7 @@ describe ExchangeCoordinatorJob, type: :job do
 
       context 'with an already processed exchange' do
         context 'with a previous exchange processed' do
-          let!(:reward) { create(:reward, type: 'ExchangeReward', created_at: Time.at(1661252299) )}
+          let!(:reward) { create(:reward, source: 'exchange', created_at: Time.at(1661252299) )}
 
           it 'does not process the exchange' do
             expect(ProcessTopupJob).to_not receive(:perform_async)
@@ -65,7 +65,7 @@ describe ExchangeCoordinatorJob, type: :job do
     context 'when the reward is available' do
       it 'process the exchange' do
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with('0x123', '0xabcd', 1661252296, 'exchange', 100, 'ExchangeReward')
+          .with('0x123', '0xabcd', 1661252296, 'exchange', 100)
           subject.perform
       end
     end

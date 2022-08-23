@@ -16,8 +16,7 @@ class WyreTopupsCoordinatorJob
                                       wallet,
                                       topup.created_at / 1000,
                                       'wyre',
-                                      topup.usd_purchase_amount,
-                                      'TopupReward')
+                                      topup.usd_purchase_amount)
       end
       offset += top_ups.size
       top_ups = search(offset)

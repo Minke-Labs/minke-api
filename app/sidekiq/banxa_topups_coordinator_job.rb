@@ -18,8 +18,7 @@ class BanxaTopupsCoordinatorJob
                                       topup.wallet_address,
                                       DateTime.parse(topup.completed_at).to_i,
                                       'banxa',
-                                      topup.coin_amount,
-                                      'TopupReward')
+                                      topup.coin_amount)
       end
       page += 1
       top_ups = search(page, start_date, end_date)

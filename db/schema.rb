@@ -51,7 +51,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_112852) do
     t.string "wallet"
     t.float "amount"
     t.integer "points"
-    t.string "type"
     t.index ["referral_id"], name: "index_rewards_on_referral_id"
   end
 

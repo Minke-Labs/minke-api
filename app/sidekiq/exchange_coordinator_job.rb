@@ -11,8 +11,7 @@ class ExchangeCoordinatorJob
                                     exchange.destination,
                                     exchange.time_stamp.to_i,
                                     'exchange',
-                                    exchange.amount.to_i,
-                                    'ExchangeReward')
+                                    exchange.amount.to_i)
     end
   end
 
@@ -25,7 +24,7 @@ class ExchangeCoordinatorJob
   end
 
   def last_reward_date
-    @last_reward_date ||= ExchangeReward.last&.created_at.to_i
+    @last_reward_date ||= Reward.where(source: 'exchange').last&.created_at.to_i
   end
 
   def default_timestamp

@@ -1,8 +1,8 @@
 class ProcessTopupJob
   include Sidekiq::Job
 
-  def perform(uid, wallet, timestamp, source, points, type)
-    return if Reward.where(type: type, uid: uid, source: source).any?
+  def perform(uid, wallet, timestamp, source, points)
+    return if Reward.where(uid: uid, source: source).any?
     
     referral = Referral.includes(:referral_code)
                        .where(wallet: wallet)
@@ -21,10 +21,10 @@ class ProcessTopupJob
 
     Reward.transaction do
       Reward.create(uid: uid, referral_id: referral.id, source: source,
-                    claimed: false, wallet: wallet, points: reward_points, type: type)
+                    claimed: false, wallet: wallet, points: reward_points)
       Reward.create(uid: uid, referral_id: referral.id, source: source,
                     claimed: false, wallet: referral.referral_code.wallet,
-                    points: reward_points , type: type)
+                    points: reward_points)
     end
   end
 end

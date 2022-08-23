@@ -1,2 +1,0 @@
-class ExchangeReward < Reward
-end
