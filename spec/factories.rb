@@ -6,6 +6,7 @@ FactoryBot.define do
     claim_uid { 'MyString' }
     source { 'MyString' }
     points { 100 }
+    type { 'TopupReward' }
   end
 
   factory(:api_user) do

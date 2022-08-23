@@ -56,7 +56,7 @@ describe BanxaTopupsCoordinatorJob, type: :job do
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with(1, 'a:0x1234', date.to_i, 'banxa', 50)
+          .with(1, '0x1234', date.to_i, 'banxa', 50, 'TopupReward')
         subject.perform
       end
     end
@@ -77,7 +77,7 @@ describe BanxaTopupsCoordinatorJob, type: :job do
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with(1, 'a:0x1234', date.to_i, 'banxa', 100)
+          .with(1, '0x1234', date.to_i, 'banxa', 100, 'TopupReward')
         subject.perform
       end
     end

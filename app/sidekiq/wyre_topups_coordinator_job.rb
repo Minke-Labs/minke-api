@@ -11,11 +11,13 @@ class WyreTopupsCoordinatorJob
         topup = OpenStruct.new(topup.transform_keys { |key| key.to_s.underscore })
         next unless topup.status === 'COMPLETE'
 
+        _network, wallet = topup.dest&.split(':')
         ProcessTopupJob.perform_async(topup.id, 
-                                      topup.dest,
+                                      wallet,
                                       topup.created_at / 1000,
                                       'wyre',
-                                      topup.usd_purchase_amount)
+                                      topup.usd_purchase_amount,
+                                      'TopupReward')
       end
       offset += top_ups.size
       top_ups = search(offset)

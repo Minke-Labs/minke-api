@@ -15,10 +15,11 @@ class BanxaTopupsCoordinatorJob
         next unless topup.order_type === 'CRYPTO-BUY' && topup.coin_code === 'USDC'
 
         ProcessTopupJob.perform_async(topup.id, 
-                                     "#{topup.tx_hash}:#{topup.wallet_address}",
-                                     DateTime.parse(topup.completed_at).to_i,
-                                     'banxa',
-                                     topup.coin_amount)
+                                      topup.wallet_address,
+                                      DateTime.parse(topup.completed_at).to_i,
+                                      'banxa',
+                                      topup.coin_amount,
+                                      'TopupReward')
       end
       page += 1
       top_ups = search(page, start_date, end_date)

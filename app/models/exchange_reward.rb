@@ -1,0 +1,2 @@
+class ExchangeReward < Reward
+end

@@ -35,7 +35,7 @@ describe WyreTopupsCoordinatorJob, type: :job do
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with(1, 'matic:0x1234', date / 1000, 'wyre', 50)
+          .with(1, '0x1234', date / 1000, 'wyre', 50, 'TopupReward')
         subject.perform
       end
     end
@@ -56,7 +56,7 @@ describe WyreTopupsCoordinatorJob, type: :job do
           .and_return(double(search: []))
 
         expect(ProcessTopupJob).to receive(:perform_async)
-          .with(1, 'matic:0x1234', date / 1000, 'wyre', 100)
+          .with(1, '0x1234', date / 1000, 'wyre', 100, 'TopupReward')
         subject.perform
       end
     end
