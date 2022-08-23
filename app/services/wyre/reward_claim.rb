@@ -27,7 +27,7 @@ class Wyre::RewardClaim
     { 
       autoConfirm: true,
       source: ENV['WYRE_ACCOUNT_SOURCE'],
-      sourceCurrency: "MATIC",
+      sourceCurrency: "USDC",
       sourceAmount: source_amount,
       dest: "matic:#{wallet}"
     }
@@ -42,12 +42,6 @@ class Wyre::RewardClaim
   end
 
   def source_amount
-    @source_amount ||= begin
-      id = 'matic-network'
-      url = "https://api.coingecko.com/api/v3/simple/price?ids=#{id}&vs_currencies=usd"
-      data = JSON.parse(RestClient.get(url).body)
-      matic_quote = data[id]['usd']
-      (points * Reward::POINTS_TO_USD) / matic_quote;
-    end
+    points * Reward::POINTS_TO_USD;
   end
 end

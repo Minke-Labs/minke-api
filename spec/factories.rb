@@ -5,6 +5,7 @@ FactoryBot.define do
     claimed { false }
     claim_uid { 'MyString' }
     source { 'MyString' }
+    points { 100 }
   end
 
   factory(:api_user) do
