@@ -18,7 +18,7 @@ describe Wyre::RewardClaim do
         {
           autoConfirm: true,
           source: ENV['WYRE_ACCOUNT_SOURCE'],
-          sourceCurrency: "USDC",
+          sourceCurrency: 'MUSDC',
           sourceAmount: 10,
           dest: "matic:#{wallet}"
         }
