@@ -3,7 +3,8 @@ class ProcessTopupJob
 
   def perform(uid, wallet, timestamp, source, points)
     return if Reward.where(uid: uid, source: source).any?
-    
+
+    wallet = Eth::Address.new(wallet).checksummed
     referral = Referral.includes(:referral_code)
                        .where(wallet: wallet)
                        .where('created_at < (?)', Time.at(timestamp))

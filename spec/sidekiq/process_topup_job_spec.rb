@@ -41,6 +41,14 @@ describe ProcessTopupJob, type: :job do
             subject.perform(1, referral.wallet, Time.now.to_i, 'wyre', 100)
             expect(Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).count).to eq(2)
           end
+
+          context 'with a bad formatted wallet' do
+            it 'creates two rewards' do
+              expect do
+                subject.perform(1, referral.wallet.downcase, Time.now.to_i, 'wyre', 100)
+              end.to change { Reward.count }.by(2)
+            end
+          end
         end
 
         context 'with an exchange reward' do
@@ -84,7 +92,7 @@ describe ProcessTopupJob, type: :job do
       context 'when the referral does not exist' do
         it 'does not create a reward' do
           expect do
-            subject.perform(1, '0xabcd', Time.now.to_i, 'wyre', 100)
+            subject.perform(1, Faker::Blockchain::Ethereum.address, Time.now.to_i, 'wyre', 100)
           end.to_not change { Reward.count }
         end
       end
