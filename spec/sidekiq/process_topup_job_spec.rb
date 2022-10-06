@@ -76,7 +76,7 @@ describe ProcessTopupJob, type: :job do
           it 'gives the right amount of points' do
             subject.perform(1, referral.wallet, Time.now.to_i, 'wyre', 40)
             points = Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).pluck(:points)
-            expect(points).to eq([40,40])
+            expect(points).to eq([20, 4])
           end
         end
 
@@ -84,7 +84,7 @@ describe ProcessTopupJob, type: :job do
           it 'gives the maximum amount of points' do
             subject.perform(1, referral.wallet, Time.now.to_i, 'wyre', 800)
             points = Reward.where(wallet: [referral.wallet, referral.referral_code.wallet]).pluck(:points)
-            expect(points).to eq([100,100])
+            expect(points).to eq([Reward::MAX_POINTS, Reward::MAX_POINTS * 0.2])
           end
         end
       end

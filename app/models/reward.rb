@@ -1,7 +1,7 @@
 class Reward < ApplicationRecord
   belongs_to :referral
   POINTS_TO_USD = 0.1
-  MAX_POINTS = 100
+  MAX_POINTS = 50
 
   def as_json(options)
     super({ include: :referral, methods: [:timestamp] }.merge(options))
