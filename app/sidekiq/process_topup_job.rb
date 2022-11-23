@@ -18,14 +18,15 @@ class ProcessTopupJob
 
     return if referred_points > 0 # already received a reward by topping up
 
-    reward_points = [points, Reward::MAX_POINTS].min
+    reward_points = [points / 2.0, Reward::MAX_POINTS].min
+    referrer_points = reward_points * 0.2
 
     Reward.transaction do
       Reward.create(uid: uid, referral_id: referral.id, source: source,
                     claimed: false, wallet: wallet, points: reward_points)
       Reward.create(uid: uid, referral_id: referral.id, source: source,
                     claimed: false, wallet: referral.referral_code.wallet,
-                    points: reward_points)
+                    points: referrer_points)
     end
   end
 end
