@@ -18,8 +18,8 @@ describe Wyre::RewardClaim do
         {
           autoConfirm: true,
           source: ENV['WYRE_ACCOUNT_SOURCE'],
-          sourceCurrency: "MATIC",
-          sourceAmount: 0.0001,
+          sourceCurrency: 'MUSDC',
+          sourceAmount: 10,
           dest: "matic:#{wallet}"
         }
       end
@@ -35,9 +35,6 @@ describe Wyre::RewardClaim do
       before do
         allow(Reward).to receive(:available_for_claiming?)
           .with(wallet, points).and_return(true)
-
-        allow(RestClient).to receive(:get)
-          .and_return(double(body: { 'matic-network' => { usd: 100_000 }}.to_json))
       end
 
       context 'when the transfer is not complete' do

@@ -1,27 +1,32 @@
 class ProcessTopupJob
   include Sidekiq::Job
 
-  def perform(topup_id, destination, timestamp, source = 'wyre')
-    return if Reward.where(uid: topup_id, source: source).any?
+  def perform(uid, wallet, timestamp, source, points)
+    return if Reward.where(uid: uid, source: source).any?
 
-    network, wallet = destination.split(':') # "matic:0x7569c080aFBeE7A2f0017865a214E2f7A416F719"
-    
+    wallet = Eth::Address.new(wallet).checksummed
     referral = Referral.includes(:referral_code)
                        .where(wallet: wallet)
                        .where('created_at < (?)', Time.at(timestamp))
                        .first
-    return unless referral
+    return unless referral # referral created after the topup / exchange
 
-    return if Reward.joins(referral: :referral_code)
-                    .where(wallet: wallet)
-                    .where.not(referral_code: { wallet: wallet })
-                    .any?
+    referred_points = Reward.joins(referral: :referral_code)
+                            .where(wallet: wallet)
+                            .where.not(referral_code: { wallet: wallet })
+                            .sum(:points)
+
+    return if referred_points > 0 # already received a reward by topping up
+
+    reward_points = [points / 2.0, Reward::MAX_POINTS].min
+    referrer_points = reward_points * 0.2
 
     Reward.transaction do
-      Reward.create(uid: topup_id, referral_id: referral.id, source: source,
-                    claimed: false, wallet: wallet)
-      Reward.create(uid: topup_id, referral_id: referral.id, source: source,
-                    claimed: false, wallet: referral.referral_code.wallet)
+      Reward.create(uid: uid, referral_id: referral.id, source: source,
+                    claimed: false, wallet: wallet, points: reward_points)
+      Reward.create(uid: uid, referral_id: referral.id, source: source,
+                    claimed: false, wallet: referral.referral_code.wallet,
+                    points: referrer_points)
     end
   end
 end
